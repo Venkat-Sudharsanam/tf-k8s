@@ -1,0 +1,4 @@
+apiVersion: v2
+name: my-database
+description: A Helm chart for deploying a MySQL database in Kubernetes
+version: 0.1.0

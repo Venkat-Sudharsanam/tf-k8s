@@ -1,0 +1,18 @@
+replicaCount: 10
+name: hello-world
+image:
+  repository: devacrvenkat.acr.io/hello-world
+  tag: latest
+  pullPolicy: Always
+service:
+  name: hellow-world-api
+  type: LoadBalancer
+  port: 9090
+nginx:
+  domain: http://helloworld.com
+  ingressClassName: nginx
+db:
+  username: haha
+  password: gotcha
+  name: sql-db
+  port: 3306

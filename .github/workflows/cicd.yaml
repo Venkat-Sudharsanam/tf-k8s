@@ -1,0 +1,54 @@
+name: app-cicd-pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build . -t ${{ secrets.ACR_SERVER }}/hello-world:${{ github.run_id }}
+          docker push ${{ secrets.ACR_SERVER }}/hello-world:${{ github.run_id }}
+
+      - name: Get AKS Context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: techassessrg
+          cluster-name: akscluster
+
+      - name: Deploy Helm chart - DB
+        uses: Azure/k8s-deploy@v1
+        with:
+          azureCredentials: ${{ secrets.AZURE_CREDENTIALS }}
+          namespace: default
+          manifests: ${{ github.workspace }}/helm-charts/database
+          overrideValues: |
+            mysql.username= ${{ secrets.DB_USERNAME }}
+            mysql.password= ${{ secrets.DB_PASSWORD }}
+
+      - name: Deploy Helm chart - API
+        uses: Azure/k8s-deploy@v1
+        with:
+          azureCredentials: ${{ secrets.AZURE_CREDENTIALS }}
+          namespace: default
+          manifests: ${{ github.workspace }}/helm-charts/api
+          overrideValues: |
+            image.tag=${{ github.run_id }}
+            db.username= ${{ secrets.DB_USERNAME }}
+            db.password= ${{ secrets.DB_PASSWORD }}

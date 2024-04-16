@@ -1,0 +1,14 @@
+resource_group_name = "dev-rsg"
+location = "eastus"
+vnet_name = "dev-vnet"
+dns_prefix = "devaksvenkat"
+vm_size = "Standard_DS2_v2"
+os_disk_size_gb = 30
+acr_name = "devacrvenkat"
+acr_sku = "Basic"
+acr_admin_enabled = false
+nginx_repo_name = "nginx-stable"
+nginx_name = "myNginx"
+nginx_version = "1.18.0"
+environment = "development"
+aks_cluster_name = "dev-venkat-aks"

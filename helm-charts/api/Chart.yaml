@@ -1,0 +1,4 @@
+apiVersion: v2
+name: hello-world-api
+description: Sample Python Helm Chart
+version: 0.1.0

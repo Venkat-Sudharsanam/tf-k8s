@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.nginx.ingressClassName }}
+spec:
+  ingressClassName: {{ .Values.nginx.ingressClassName }}
+  rules:
+  - host: {{ .Values.nginx.domain }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: {{ .Values.name }}
+            port:
+              number: 9090
